@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "735564566496",
+    "firebase_url": "https://vengo-del-super-f33d2.firebaseio.com",
+    "project_id": "vengo-del-super-f33d2",
+    "storage_bucket": "vengo-del-super-f33d2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:735564566496:android:d570a1486cc6f7e9bda585",
+        "android_client_info": {
+          "package_name": "com.vengo_del_super.vengo_del_super"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "735564566496-g9bj3mfhnnsaoobhciommfbi9mdp25sj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCYwKNv60jZGUdKspKIgF_OR-dNDnMoW-s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "735564566496-g9bj3mfhnnsaoobhciommfbi9mdp25sj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
