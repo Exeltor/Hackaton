@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vengo_del_super/screens/home_screen.dart';
 import 'package:vengo_del_super/screens/lista_compra_screen.dart';
+import 'screens/login_screen.dart';
 
 void main() => runApp(MyApp());
 
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget {
         canvasColor: Colors.grey[200],
         fontFamily: 'Raleway'
       ),
-      home: HomeScreen(),
+      home: LoginScreen(),
       routes: {
         ListaCompraScreen.routeName: (context) => ListaCompraScreen(),
       },
