@@ -12,6 +12,14 @@ class AppDrawer extends StatelessWidget {
           ),
           Divider(),
           ListTile(
+            leading: Icon(Icons.shopping_cart),
+            title: Text('Pedidos en curso'),
+            onTap: () {
+              
+            },
+          ),
+          Divider(),
+          ListTile(
             leading: Icon(Icons.settings),
             title: Text('Ajustes'),
             onTap: () {},

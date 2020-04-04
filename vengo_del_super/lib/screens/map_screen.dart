@@ -25,6 +25,9 @@ class _MapScreenState extends State<MapScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Elige destino de la entrega'),
+        actions: <Widget>[
+          IconButton(icon: Icon(Icons.check), onPressed: _pickedLocation == null ? null : () => Navigator.of(context).pop(_pickedLocation))
+        ],
       ),
       body: GoogleMap(
         initialCameraPosition: CameraPosition(

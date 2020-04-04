@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:vengo_del_super/screens/hacer_compra.dart';
+import 'package:vengo_del_super/screens/lista_listas_screen.dart';
 import 'package:vengo_del_super/styles/font_styles.dart';
 import 'package:vengo_del_super/widgets/drawer.dart';
 
@@ -52,7 +52,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ),
                 onTap: () {
-                  Navigator.of(context).pushNamed(HacerCompraScreen.routeName);
+                  Navigator.of(context).pushNamed(ListadeListasScreen.routeName);
                 },
               ),
             ),

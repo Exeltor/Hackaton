@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:vengo_del_super/providers/compraService.dart';
 import 'package:vengo_del_super/screens/confirmar_compra_screen.dart';
 import 'package:vengo_del_super/screens/customer_submit_address_screen.dart';
-import 'package:vengo_del_super/screens/hacer_compra.dart';
+import 'package:vengo_del_super/screens/lista_listas_screen.dart';
 import 'package:vengo_del_super/screens/home_screen.dart';
 import 'package:vengo_del_super/screens/lista_compra_screen.dart';
 import 'package:vengo_del_super/services/auth.dart';
@@ -49,7 +49,7 @@ class MyApp extends StatelessWidget {
             ListaCompraScreen.routeName: (context) => ListaCompraScreen(),
             CustomerSubmitAddressScreen.routeName: (context) =>
                 CustomerSubmitAddressScreen(),
-            HacerCompraScreen.routeName: (context) => HacerCompraScreen(),
+            ListadeListasScreen.routeName: (context) => ListadeListasScreen(),
             ConfirmarCompraScreen.routeName: (context) => ConfirmarCompraScreen(),
           },
         ),

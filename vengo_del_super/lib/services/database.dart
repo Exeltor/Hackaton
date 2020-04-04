@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/widgets.dart';
-import 'package:vengo_del_super/models/user.dart';
 import 'package:vengo_del_super/models/userData.dart';
-import 'package:vengo_del_super/services/auth.dart';
 
 class DatabaseService extends ChangeNotifier{
   final String uid;
