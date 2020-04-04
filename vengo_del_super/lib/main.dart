@@ -6,6 +6,7 @@ import 'package:vengo_del_super/screens/hacer_compra.dart';
 import 'package:vengo_del_super/screens/home_screen.dart';
 import 'package:vengo_del_super/screens/lista_compra_screen.dart';
 import 'package:vengo_del_super/services/auth.dart';
+import 'package:vengo_del_super/services/database.dart';
 import 'screens/login_screen.dart';
 
 void main() => runApp(MyApp());
@@ -20,6 +21,10 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (context) => AuthService(),
+        ),
+        ChangeNotifierProxyProvider<AuthService, DatabaseService>(
+          create: (context) => DatabaseService(uid: null),
+          update: (_, auth, __) => DatabaseService(uid: auth.uid),
         ),
       ],
       child: Consumer<AuthService>(

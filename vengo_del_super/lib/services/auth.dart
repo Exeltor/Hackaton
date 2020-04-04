@@ -5,7 +5,7 @@ import 'package:vengo_del_super/services/database.dart';
 
 class AuthService with ChangeNotifier{
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  var _user;
+  String uid = '';
   bool _loggedIn = false;
 
   User _userFromFirebaseUser(FirebaseUser user) {
@@ -24,7 +24,8 @@ class AuthService with ChangeNotifier{
       FirebaseUser user = result.user;
 
       // create a document for the user with the uid
-      await DatabaseService(uid: user.uid).updateUserData(nombre, telefono);
+      uid = user.uid;
+      await DatabaseService().updateUserData(nombre, telefono);
       _loggedIn = true;
       notifyListeners();
       return _userFromFirebaseUser(user);
