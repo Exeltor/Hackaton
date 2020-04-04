@@ -6,6 +6,8 @@ import 'package:vengo_del_super/widgets/drawer.dart';
 import 'lista_compra_screen.dart';
 
 class HomeScreen extends StatelessWidget {
+  static const routeName = '/home';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
