@@ -59,4 +59,14 @@ class AuthService with ChangeNotifier{
       return null;
     }
   }
+
+  Future signOut() async {
+    try {
+      await _auth.signOut();
+      _loggedIn = false;
+      notifyListeners();
+    } catch (e) {
+
+    }
+  }
 }

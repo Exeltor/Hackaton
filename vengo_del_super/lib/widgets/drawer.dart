@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:vengo_del_super/services/auth.dart';
 
 class AppDrawer extends StatelessWidget {
   @override
@@ -34,7 +36,9 @@ class AppDrawer extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.exit_to_app),
             title: Text('Cerrar sesion'),
-            onTap: () {},
+            onTap: () {
+              Provider.of<AuthService>(context, listen: false).signOut();
+            },
           ),
         ]
       ),
