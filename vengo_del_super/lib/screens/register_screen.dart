@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:vengo_del_super/services/auth.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -16,7 +17,6 @@ class _RegisterScreen extends State<RegisterScreen> {
   String _telefono;
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final AuthService _auth = AuthService();
   String validateEmail(String value) {
     Pattern pattern =
         r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
@@ -167,7 +167,7 @@ class _RegisterScreen extends State<RegisterScreen> {
                           print(_password2);
                           print(_telefono);
                           dynamic result =
-                              await _auth.registerWithEmailAndPassword(
+                              await Provider.of<AuthService>(context, listen: false).registerWithEmailAndPassword(
                                   _email, _password1, _nombre, _telefono);
                           if (result == null) {
                             _showDialog('ERROR',

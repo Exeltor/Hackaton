@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:vengo_del_super/services/auth.dart';
 
 import 'register_screen.dart';
@@ -16,7 +17,6 @@ class _LoginScreen extends State<LoginScreen> {
   String _email;
   String _password;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final AuthService _auth = AuthService();
   String validateEmail(String value) {
     Pattern pattern =
         r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$';
@@ -70,7 +70,7 @@ class _LoginScreen extends State<LoginScreen> {
                     child: TextFormField(
                       decoration: const InputDecoration(labelText: 'Correo'),
                       keyboardType: TextInputType.emailAddress,
-                      onChanged: (val) => {setState(() => _email = val)},
+                      onChanged: (val) => {_email = val},
                       validator: (String value) {
                         if (value.isEmpty) {
                           return 'Email is Required';
@@ -111,7 +111,7 @@ class _LoginScreen extends State<LoginScreen> {
                         print(_email);
                         print(_password);
                         dynamic result =
-                            await _auth.signInWithEmailAndPassword(_email, _password);
+                            await Provider.of<AuthService>(context, listen:false).signInWithEmailAndPassword(_email, _password);
                         if (result == null) {
                           setState(() => _showDialog('ERROR',
                               'No se ha podido iniciar sesión con esos credenciales'));
