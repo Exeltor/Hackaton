@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'customer_submit_address_screen.dart';
+
 class ListaCompraScreen extends StatefulWidget {
   static const routeName = "/lista-compra";
 
@@ -159,6 +161,9 @@ class _ListaCompraScreenState extends State<ListaCompraScreen> {
                   ),
                 ],
               ),
+              onTap: () {
+                Navigator.of(context).pushNamed(CustomerSubmitAddressScreen.routeName);
+              },
             ),
           )
         ],
