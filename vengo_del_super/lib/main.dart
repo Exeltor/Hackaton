@@ -50,6 +50,7 @@ class MyApp extends StatelessWidget {
             CustomerSubmitAddressScreen.routeName: (context) =>
                 CustomerSubmitAddressScreen(),
             HacerCompraScreen.routeName: (context) => HacerCompraScreen(),
+            ConfirmarCompraScreen.routeName: (context) => ConfirmarCompraScreen(),
           },
         ),
       ),
