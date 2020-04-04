@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
+import 'package:provider/provider.dart';
 import 'package:vengo_del_super/helpers/location_helper.dart';
+import 'package:vengo_del_super/providers/compraService.dart';
+import 'package:vengo_del_super/screens/confirmar_compra_screen.dart';
 
 class CustomerSubmitAddressScreen extends StatefulWidget {
   static const routeName = '/customer-submit-address';
@@ -17,6 +20,7 @@ class _CustomerSubmitAddressScreenState
   final _puertaController = TextEditingController();
   bool _verifiedAddress = false;
   String _previewImageUrl;
+  Map _geolocation;
 
   Future<void> _getCurrentLocation() async {
     final location = await Location().getLocation();
@@ -42,6 +46,7 @@ class _CustomerSubmitAddressScreenState
   void _showPreview(double lat, double lng) {
     final previewImageUrl = LocationHelper.generateLocationPreviewImage(
         latitude: lat, longitude: lng);
+    _geolocation = {'lat': lat, 'lng': lng};
     setState(() {
       _previewImageUrl = previewImageUrl;
     });
@@ -67,9 +72,33 @@ class _CustomerSubmitAddressScreenState
       );
     }
 
-    print(_addressController.text);
-    print(_pisoController.text);
-    print(_puertaController.text);
+    if (!_verifiedAddress) {
+      return showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Direccion no verificada'),
+          content: Text('Utiliza "Localizame" o "Busca por direccion"'),
+          actions: <Widget>[
+            FlatButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(
+                'Ok',
+                style: TextStyle(color: Theme.of(context).accentColor),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    Provider.of<CompraService>(context, listen: false).submitDireccionEntrega(
+        _addressController.text,
+        _pisoController.text,
+        _puertaController.text,
+        _geolocation,
+        _previewImageUrl);
+
+    Navigator.of(context).pushNamed(ConfirmarCompraScreen.routeName);
   }
 
   @override
@@ -197,8 +226,11 @@ class _CustomerSubmitAddressScreenState
               ButtonTheme(
                 height: 80,
                 child: RaisedButton(
-                  child: Text('Confirmar direccion',
-                      style: TextStyle(color: Theme.of(context).canvasColor, fontSize: 20),),
+                  child: Text(
+                    'Confirmar direccion',
+                    style: TextStyle(
+                        color: Theme.of(context).canvasColor, fontSize: 20),
+                  ),
                   color: Theme.of(context).accentColor,
                   onPressed: _submit,
                 ),

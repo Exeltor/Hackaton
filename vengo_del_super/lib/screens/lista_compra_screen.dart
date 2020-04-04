@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:vengo_del_super/providers/compraService.dart';
 
 import 'customer_submit_address_screen.dart';
 
@@ -22,9 +24,10 @@ class _ListaCompraScreenState extends State<ListaCompraScreen> {
 
     _form.currentState.save();
 
-    Map<String, String> articulo = {
+    Map<String, dynamic> articulo = {
       'nombre': _articuloCompra,
-      'cantidad': _cantidadCompra
+      'cantidad': _cantidadCompra,
+      'comprado': false,
     };
 
     setState(() {
@@ -53,6 +56,31 @@ class _ListaCompraScreenState extends State<ListaCompraScreen> {
         _listaCompra.insert(newIndex, item);
       },
     );
+  }
+
+  void _nextStep() {
+    if (_listaCompra.length < 1) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Comprueba tu lista'),
+          content: Text('Tienes que tener al menos un articulo en tu lista de compra'),
+          actions: <Widget>[
+            FlatButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(
+                'Ok',
+                style: TextStyle(color: Theme.of(context).accentColor),
+              ),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    Provider.of<CompraService>(context, listen: false).submitListaDeCompra(_listaCompra);
+    Navigator.of(context).pushNamed(CustomerSubmitAddressScreen.routeName);
   }
 
   @override
@@ -161,9 +189,7 @@ class _ListaCompraScreenState extends State<ListaCompraScreen> {
                   ),
                 ],
               ),
-              onTap: () {
-                Navigator.of(context).pushNamed(CustomerSubmitAddressScreen.routeName);
-              },
+              onTap: _nextStep,
             ),
           )
         ],

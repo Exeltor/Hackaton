@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:vengo_del_super/screens/hacer_compra.dart';
 import 'package:vengo_del_super/styles/font_styles.dart';
 import 'package:vengo_del_super/widgets/drawer.dart';
 
 import 'lista_compra_screen.dart';
 
 class HomeScreen extends StatelessWidget {
+  static const routeName = '/home';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,7 +51,9 @@ class HomeScreen extends StatelessWidget {
                     style: homeCardStyle,
                   ),
                 ),
-                onTap: () {},
+                onTap: () {
+                  Navigator.of(context).pushNamed(HacerCompraScreen.routeName);
+                },
               ),
             ),
           ),
