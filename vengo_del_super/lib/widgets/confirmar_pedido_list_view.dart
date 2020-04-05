@@ -4,12 +4,14 @@ class ConfirmarPedidoListView extends StatelessWidget {
   const ConfirmarPedidoListView({
     @required this.articulos,
     @required this.aceptado,
-    @required this.flipComprado
+    @required this.flipComprado,
+    @required this.terminado
   });
 
   final articulos;
   final bool aceptado;
   final Function flipComprado;
+  final bool terminado;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +23,7 @@ class ConfirmarPedidoListView extends StatelessWidget {
           style: TextStyle(fontSize: 18),
         ),
         subtitle: Text('Cantidad: ${articulos[i]['cantidad']}',style: TextStyle(fontSize: 16),),
-        trailing: !aceptado
+        trailing: !aceptado || terminado
             ? null
             : Checkbox(
                 value: articulos[i]['comprado'],

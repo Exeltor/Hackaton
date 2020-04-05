@@ -24,9 +24,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => AuthService(),
         ),
-        ChangeNotifierProxyProvider<AuthService, DatabaseService>(
-          create: (context) => DatabaseService(uid: null),
-          update: (_, auth, __) => DatabaseService(uid: auth.uid),
+        ChangeNotifierProvider(
+          create: (context) => DatabaseService(),
         ),
       ],
       child: Consumer<AuthService>(

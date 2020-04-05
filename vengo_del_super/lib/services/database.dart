@@ -3,17 +3,11 @@ import 'package:flutter/widgets.dart';
 import 'package:vengo_del_super/models/userData.dart';
 
 class DatabaseService extends ChangeNotifier{
-  final String uid;
-  DatabaseService({this.uid});
   final CollectionReference _users = Firestore.instance.collection('users');
   final CollectionReference _listasCompra =
       Firestore.instance.collection('listasDeCompra');
 
-  Future updateUserData(String nombre, String telefono) async {
-    return await _users
-        .document(uid)
-        .setData({'nombre': nombre, 'telefono': telefono});
-  }
+  
 
   Stream<QuerySnapshot> get users {
     return _users.snapshots();

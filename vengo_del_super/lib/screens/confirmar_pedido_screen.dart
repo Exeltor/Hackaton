@@ -42,7 +42,7 @@ class _ConfirmarPedidoScreenState extends State<ConfirmarPedidoScreen> {
       setState(() {
         aceptado = true;
       });
-    } else if(doc['repartidor'] != null && doc['terminado']) {
+    } else if (doc['repartidor'] != null && doc['terminado']) {
       setState(() {
         aceptado = true;
         terminado = true;
@@ -62,6 +62,18 @@ class _ConfirmarPedidoScreenState extends State<ConfirmarPedidoScreen> {
         .updateData({'repartidor': userId}).then((reponse) {
       setState(() {
         aceptado = true;
+      });
+    }).catchError((error) {
+      print(error);
+    });
+  }
+
+  _terminarPedido() {
+    _firestore
+        .document('listasDeCompra/${widget.pedidoId}')
+        .updateData({'terminado': true}).then((response) {
+      setState(() {
+        terminado = true;
       });
     }).catchError((error) {
       print(error);
@@ -134,7 +146,11 @@ class _ConfirmarPedidoScreenState extends State<ConfirmarPedidoScreen> {
                       return Text('Cargando...');
                     default:
                       var articulos = snapshot.data['articulos'];
-                      return ConfirmarPedidoListView(articulos: articulos, aceptado: aceptado, flipComprado: _flipComprado);
+                      return ConfirmarPedidoListView(
+                          articulos: articulos,
+                          aceptado: aceptado,
+                          flipComprado: _flipComprado,
+                          terminado: terminado,);
                   }
                 },
               ),
@@ -179,14 +195,10 @@ class _ConfirmarPedidoScreenState extends State<ConfirmarPedidoScreen> {
                 ),
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 color: Theme.of(context).accentColor,
-                onPressed: () {
-                  setState(() {
-                    _aceptarPedido();
-                  });
-                },
+                onPressed: _aceptarPedido,
               ),
             ),
-          if(aceptado && !terminado)
+          if (aceptado && !terminado)
             ButtonTheme(
               height: 50,
               child: RaisedButton(
@@ -196,13 +208,22 @@ class _ConfirmarPedidoScreenState extends State<ConfirmarPedidoScreen> {
                 ),
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 color: Theme.of(context).accentColor,
-                onPressed: () {
-                  setState(() {
-                    _aceptarPedido();
-                  });
-                },
+                onPressed: _terminarPedido,
               ),
             ),
+          if (terminado)
+            Container(
+              height: 50,
+              alignment: Alignment.center,
+              color: Theme.of(context).accentColor,
+              child: Text(
+                'Este pedido ha sido finalizado',
+                style: TextStyle(
+                  color: Theme.of(context).canvasColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            )
         ],
       ),
     );

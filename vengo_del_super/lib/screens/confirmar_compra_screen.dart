@@ -96,7 +96,7 @@ class ConfirmarCompraScreen extends StatelessWidget {
                                     Text(
                                       data.direccionCompleta['puerta'] == ''
                                           ? 'N/A'
-                                          : data.direccionCompleta['piso'],
+                                          : data.direccionCompleta['puerta'],
                                       style: TextStyle(fontSize: 18),
                                     ),
                                   ],

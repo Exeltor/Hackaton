@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+import 'package:provider/provider.dart';
 import 'package:vengo_del_super/models/user.dart';
 import 'package:vengo_del_super/services/database.dart';
 
@@ -25,8 +27,8 @@ class AuthService with ChangeNotifier{
 
       // create a document for the user with the uid
       uid = user.uid;
-      await DatabaseService().updateUserData(nombre, telefono);
       _loggedIn = true;
+      updateUserData(nombre, telefono);
       notifyListeners();
       return _userFromFirebaseUser(user);
     } catch (e) {
@@ -34,6 +36,11 @@ class AuthService with ChangeNotifier{
       _loggedIn = false;
       return null;
     }
+  }
+  Future updateUserData(String nombre, String telefono) async {
+    return await Firestore.instance.collection('users')
+        .document(uid)
+        .setData({'nombre': nombre, 'telefono': telefono});
   }
 
   Future<bool> autoLogin() async {
