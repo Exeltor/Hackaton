@@ -4,6 +4,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:vengo_del_super/screens/map_screen.dart';
 import 'package:vengo_del_super/services/auth.dart';
+import 'package:vengo_del_super/widgets/confirmar_pedido_list_view.dart';
+import 'package:vengo_del_super/widgets/user_data_bottom_sheet_content.dart';
 
 class ConfirmarPedidoScreen extends StatefulWidget {
   final userId, pedidoId, distancia;
@@ -19,32 +21,39 @@ class _ConfirmarPedidoScreenState extends State<ConfirmarPedidoScreen> {
   Future<DocumentSnapshot> userFuture;
   Firestore _firestore = Firestore.instance;
   LatLng localizacion;
+  Map localizacionCompleta;
+  Map destino;
 
   openMap(double lat, double lon) {}
 
   @override
-  void initState() { 
+  void initState() {
     super.initState();
-    pedidoStream = _firestore.document('listasDeCompra/${widget.pedidoId}').snapshots();
+    pedidoStream =
+        _firestore.document('listasDeCompra/${widget.pedidoId}').snapshots();
     userFuture = _firestore.document('users/${widget.userId}').get();
     _initAceptado();
   }
 
   _initAceptado() async {
     DocumentSnapshot doc = await pedidoStream.first;
-    if(doc['repartidor'] != null) {
+    if (doc['repartidor'] != null) {
       setState(() {
         aceptado = true;
       });
-    } else {
-      print('no hay repartidor bro');
     }
-    localizacion = LatLng(doc['localizacion']['geolocalizacion']['lat'], doc['localizacion']['geolocalizacion']['lng']);
+    destino = doc['localizacion'];
+    localizacion = LatLng(doc['localizacion']['geolocalizacion']['lat'],
+        doc['localizacion']['geolocalizacion']['lng']);
+
+    localizacionCompleta = doc['localizacion'];
   }
 
   _aceptarPedido() {
     final userId = Provider.of<AuthService>(context, listen: false).uid;
-    _firestore.document('listasDeCompra/${widget.pedidoId}').updateData({'repartidor': userId}).then((reponse) {
+    _firestore
+        .document('listasDeCompra/${widget.pedidoId}')
+        .updateData({'repartidor': userId}).then((reponse) {
       setState(() {
         aceptado = true;
       });
@@ -54,7 +63,48 @@ class _ConfirmarPedidoScreenState extends State<ConfirmarPedidoScreen> {
   }
 
   _abrirMapa() {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) => MapScreen(geolocation: localizacion, fromConfirmar: true,)));
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => MapScreen(
+              geolocation: localizacion,
+              fromConfirmar: true,
+            )));
+  }
+
+  _flipComprado(oldArt, newArt) {
+    _firestore.document('listasDeCompra/${widget.pedidoId}').updateData({
+      'articulos': FieldValue.arrayRemove([oldArt])
+    }).then((success) {
+      _firestore.document('listasDeCompra/${widget.pedidoId}').updateData({
+        'articulos': FieldValue.arrayUnion([newArt])
+      });
+    });
+  }
+
+  _showBottomSheet() async {
+    var destinatario = await userFuture;
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => Container(
+        color: Color(0xFF737373),
+        height: 300,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Theme.of(context).canvasColor,
+            borderRadius: BorderRadius.only(
+              topLeft: const Radius.circular(20),
+              topRight: const Radius.circular(20),
+            ),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: UserDataBottomSheetContent(
+              localizacionCompleta: localizacionCompleta,
+              destinatario: destinatario,
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -77,13 +127,8 @@ class _ConfirmarPedidoScreenState extends State<ConfirmarPedidoScreen> {
                     case ConnectionState.waiting:
                       return Text('Cargando...');
                     default:
-                      return ListView(
-                        children: snapshot.data['articulos']
-                            .map<Widget>((articulo) => ListTile(
-                                  title: Text(articulo['nombre']),
-                                ))
-                            .toList(),
-                      );
+                      var articulos = snapshot.data['articulos'];
+                      return ConfirmarPedidoListView(articulos: articulos, aceptado: aceptado, flipComprado: _flipComprado);
                   }
                 },
               ),
@@ -91,23 +136,49 @@ class _ConfirmarPedidoScreenState extends State<ConfirmarPedidoScreen> {
           ),
           Row(
             children: <Widget>[
-              RaisedButton(
-                child: Text('Ubicación de la entrega'),
-                onPressed: _abrirMapa,
+              Expanded(
+                child: FlatButton(
+                  child: Text(
+                    'Ubicación de la entrega',
+                    style: TextStyle(
+                      color: Theme.of(context).accentColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  onPressed: _abrirMapa,
+                ),
               ),
-              RaisedButton(
-                  child: Text('Datos del destinatario'),
-                  onPressed: !aceptado ? null : () {})
+              if (aceptado)
+                Expanded(
+                  child: FlatButton(
+                    child: Text(
+                      'Datos del destinatario',
+                      style: TextStyle(
+                        color: Theme.of(context).accentColor,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    onPressed: _showBottomSheet,
+                  ),
+                )
             ],
           ),
           if (!aceptado)
-            RaisedButton(
-              child: Text('Aceptar pedido'),
-              onPressed: () {
-              setState(() {
-                _aceptarPedido();
-              });
-              },
+            ButtonTheme(
+              height: 50,
+              child: RaisedButton(
+                child: Text(
+                  'Aceptar pedido',
+                  style: TextStyle(color: Theme.of(context).canvasColor),
+                ),
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                color: Theme.of(context).accentColor,
+                onPressed: () {
+                  setState(() {
+                    _aceptarPedido();
+                  });
+                },
+              ),
             ),
         ],
       ),
