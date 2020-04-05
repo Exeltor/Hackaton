@@ -22,7 +22,7 @@ class HomeScreen extends StatelessWidget {
           Flexible(
             flex: 1,
             child: Center(
-              child: Text('logazo aqui'),
+              child: Image.asset('assets/images/logo.jpg'),
             ),
           ),
           Flexible(
