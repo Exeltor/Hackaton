@@ -6,6 +6,7 @@ import 'package:vengo_del_super/screens/customer_submit_address_screen.dart';
 import 'package:vengo_del_super/screens/lista_listas_screen.dart';
 import 'package:vengo_del_super/screens/home_screen.dart';
 import 'package:vengo_del_super/screens/lista_compra_screen.dart';
+import 'package:vengo_del_super/screens/pedidos_activos.dart';
 import 'package:vengo_del_super/services/auth.dart';
 import 'package:vengo_del_super/services/database.dart';
 import 'screens/login_screen.dart';
@@ -51,6 +52,7 @@ class MyApp extends StatelessWidget {
                 CustomerSubmitAddressScreen(),
             ListadeListasScreen.routeName: (context) => ListadeListasScreen(),
             ConfirmarCompraScreen.routeName: (context) => ConfirmarCompraScreen(),
+            PedidosActivosScreen.routeName: (context) => PedidosActivosScreen(),
           },
         ),
       ),

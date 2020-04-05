@@ -12,7 +12,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Home'),
+        title: Text('Vengo del Super'),
       ),
       drawer: AppDrawer(),
       body: Column(
@@ -22,7 +22,7 @@ class HomeScreen extends StatelessWidget {
           Flexible(
             flex: 1,
             child: Center(
-              child: Image.asset('assets/images/logo.jpg'),
+              child: Image.asset('assets/images/logo.png'),
             ),
           ),
           Flexible(
