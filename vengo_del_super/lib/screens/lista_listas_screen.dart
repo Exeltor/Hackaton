@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:provider/provider.dart';
+import 'package:vengo_del_super/screens/confirmar_pedido_screen.dart';
 import 'package:vengo_del_super/screens/map_screen.dart';
 import 'package:vengo_del_super/services/database.dart';
 import 'package:great_circle_distance2/great_circle_distance2.dart';
@@ -19,14 +20,17 @@ class _ListadeListasScreenState extends State<ListadeListasScreen> {
   LatLng myLoc;
   abrirMapa() async {
     var location;
-    if(myLoc == null) {
+    if (myLoc == null) {
+      _showLoadingDialog();
       location = await Location().getLocation();
       myLoc = LatLng(location.latitude, location.longitude);
+      Navigator.of(context).pop();
     }
     _tiendaElegida = await Navigator.of(context).push(MaterialPageRoute(
         fullscreenDialog: true,
-        builder: (context) =>
-            MapScreen(myLoc)));
+        builder: (context) => MapScreen(
+              geolocation: myLoc,
+            )));
   }
 
   calculateDistance(double lat, double lon) {
@@ -36,6 +40,25 @@ class _ListadeListasScreenState extends State<ListadeListasScreen> {
             latitude2: _tiendaElegida.latitude,
             longitude2: _tiendaElegida.longitude)
         .haversineDistance();
+  }
+
+  _showLoadingDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        content: Container(
+          height: 200,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              CircularProgressIndicator(),
+              Text('Obteniendo localizacion')
+            ],
+          ),
+        ),
+      ),
+      barrierDismissible: false,
+    );
   }
 
   String distanceTo(double lat, double lon) {
@@ -69,35 +92,7 @@ class _ListadeListasScreenState extends State<ListadeListasScreen> {
                   return Text('Cargando...');
                 default:
                   return Expanded(
-                    child: ListView(
-                        children: snapshot.data.documents
-                            .where((DocumentSnapshot document) =>
-                                calculateDistance(
-                                    document['localizacion']['geolocalizacion']
-                                        ['lat'],
-                                    document['localizacion']['geolocalizacion']
-                                        ['lng']) <
-                                10000)
-                            .toList()
-                            .map((DocumentSnapshot document) => ListTile(
-                                  key: ValueKey(document.documentID),
-                                  title: FutureBuilder(
-                                    future:
-                                        Provider.of<DatabaseService>(context)
-                                            .userMap(document['usuario']),
-                                    builder: (context, snapshot) => snapshot
-                                                .connectionState ==
-                                            ConnectionState.waiting
-                                        ? Center(
-                                            child: CircularProgressIndicator())
-                                        : Text(snapshot.data.nombre),
-                                  ),
-                                  subtitle: Text(
-                                      document['localizacion']['direccion']),
-                                  trailing: Text(
-                                      '${distanceTo(document['localizacion']['geolocalizacion']['lat'], document['localizacion']['geolocalizacion']['lng'])} metros'),
-                                ))
-                            .toList()),
+                    child: buildListContent(snapshot, context),
                   );
               }
             },
@@ -105,5 +100,56 @@ class _ListadeListasScreenState extends State<ListadeListasScreen> {
         ],
       ),
     );
+  }
+
+  buildListContent(
+      AsyncSnapshot<QuerySnapshot> snapshot, BuildContext context) {
+    if (_tiendaElegida == null) {
+      return Center(
+        child: Text('Selecciona la tienda a la que vas a ir para ver listas'),
+      );
+    } else {
+      return _buildListView(snapshot, context);
+    }
+  }
+
+  ListView _buildListView(
+      AsyncSnapshot<QuerySnapshot> snapshot, BuildContext context) {
+    return ListView(
+        children: snapshot.data.documents
+            .where((DocumentSnapshot document) =>
+                calculateDistance(
+                    document['localizacion']['geolocalizacion']['lat'],
+                    document['localizacion']['geolocalizacion']['lng']) <
+                10000 && document['repartidor'] == null)
+            .toList()
+            .map((DocumentSnapshot document) => InkWell(
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                        builder: (context) => ConfirmarPedidoScreen(
+                            pedidoId: document.documentID,
+                            userId: document.data['usuario'],
+                            distancia: distanceTo(
+                                document['localizacion']['geolocalizacion']
+                                    ['lat'],
+                                document['localizacion']['geolocalizacion']
+                                    ['lng']))),
+                  ),
+                  child: ListTile(
+                    key: ValueKey(document.documentID),
+                    title: FutureBuilder(
+                      future: Provider.of<DatabaseService>(context)
+                          .userMap(document['usuario']),
+                      builder: (context, snapshot) =>
+                          snapshot.connectionState == ConnectionState.waiting
+                              ? Center(child: CircularProgressIndicator())
+                              : Text(snapshot.data.nombre),
+                    ),
+                    subtitle: Text(document['localizacion']['direccion']),
+                    trailing: Text(
+                        '${distanceTo(document['localizacion']['geolocalizacion']['lat'], document['localizacion']['geolocalizacion']['lng'])} metros'),
+                  ),
+                ))
+            .toList());
   }
 }

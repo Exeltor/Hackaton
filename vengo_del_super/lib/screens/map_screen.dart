@@ -3,8 +3,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class MapScreen extends StatefulWidget {
   final LatLng geolocation;
-
-  MapScreen(this.geolocation);
+  final bool fromConfirmar;
+  MapScreen({@required this.geolocation, this.fromConfirmar = false});
 
   @override
   _MapScreenState createState() => _MapScreenState();
@@ -12,6 +12,14 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
   LatLng _pickedLocation;
+
+  @override
+  void initState() {
+    super.initState();
+    if(widget.fromConfirmar){
+      _selectPlace(widget.geolocation);
+    }
+  }
 
   void _selectPlace(LatLng position) {
     setState(() {
@@ -25,7 +33,7 @@ class _MapScreenState extends State<MapScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Elige destino de la entrega'),
-        actions: <Widget>[
+        actions: widget.fromConfirmar ? null :<Widget>[
           IconButton(icon: Icon(Icons.check), onPressed: _pickedLocation == null ? null : () => Navigator.of(context).pop(_pickedLocation))
         ],
       ),
@@ -34,7 +42,7 @@ class _MapScreenState extends State<MapScreen> {
           target: widget.geolocation,
           zoom: 16,
         ),
-        onTap: _selectPlace,
+        onTap: widget.fromConfirmar ? null : _selectPlace,
         markers: _pickedLocation == null
             ? null
             : {

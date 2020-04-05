@@ -39,6 +39,7 @@ class AuthService with ChangeNotifier{
   Future<bool> autoLogin() async {
     final user = await _auth.currentUser();
     if (user == null) return false;
+    uid = user.uid;
     _loggedIn = true;
     notifyListeners();
     return true;
