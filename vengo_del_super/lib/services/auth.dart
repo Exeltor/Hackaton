@@ -51,8 +51,9 @@ class AuthService with ChangeNotifier{
       AuthResult result = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
       FirebaseUser user = result.user;
-      notifyListeners();
+      uid = user.uid;
       _loggedIn = true;
+      notifyListeners();
       return _userFromFirebaseUser(user);
     } catch (e) {
       print(e.toString());
@@ -65,9 +66,10 @@ class AuthService with ChangeNotifier{
     try {
       await _auth.signOut();
       _loggedIn = false;
+      uid = '';
       notifyListeners();
     } catch (e) {
-
+      print('bro');
     }
   }
 }

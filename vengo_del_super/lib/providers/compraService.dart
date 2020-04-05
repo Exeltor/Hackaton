@@ -25,6 +25,7 @@ class CompraService with ChangeNotifier {
   crearListaDeCompra() async {
     final user = await _auth.currentUser();
     await _firestore.collection('listasDeCompra').document().setData({
+      'terminado': false,
       'articulos': _listaDeCompra,
       'usuario': user.uid,
       'localizacion': {

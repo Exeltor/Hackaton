@@ -35,7 +35,6 @@ class _LoginScreen extends State<LoginScreen> {
           title: new Text(title),
           content: new Text(body),
           actions: <Widget>[
-            // usually buttons at the bottom of the dialog
             new FlatButton(
               child: new Text("Close"),
               onPressed: () {
@@ -54,71 +53,104 @@ class _LoginScreen extends State<LoginScreen> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
-          Container(
-            margin: EdgeInsets.all(24),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 10),
-                    child: TextFormField(
-                      decoration: const InputDecoration(labelText: 'Correo'),
-                      keyboardType: TextInputType.emailAddress,
-                      onChanged: (val) => {_email = val},
-                      validator: (String value) {
-                        if (value.isEmpty) {
-                          return 'Email is Required';
-                        }
+          Flexible(
+            child: Center(
+              child: Form(
+                key: _formKey,
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Image.asset(
+                          'assets/images/logo.png',
+                          height: 120,
+                        ),
+                        Text(
+                          'Vengo del Súper',
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        TextFormField(
+                          decoration:
+                              const InputDecoration(labelText: 'Correo'),
+                          keyboardType: TextInputType.emailAddress,
+                          onChanged: (val) => {_email = val},
+                          validator: (String value) {
+                            if (value.isEmpty) {
+                              return 'Email is Required';
+                            }
 
-                        return validateEmail(value);
-                      },
+                            return validateEmail(value);
+                          },
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        TextFormField(
+                          decoration:
+                              const InputDecoration(labelText: 'Contraseña'),
+                          onChanged: (val) => {setState(() => _password = val)},
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'Introduce una contraseña';
+                            }
+                            if (value.length < 6) {
+                              return 'La contraseña debe tener 6 caracteres mínimo';
+                            }
+                            return null;
+                          },
+                          obscureText: true,
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        RaisedButton(
+                          color: Theme.of(context).primaryColor,
+                          onPressed: () async {
+                            if (!_formKey.currentState.validate()) {
+                              return;
+                            }
+
+                            _formKey.currentState.save();
+
+                            print(_email);
+                            print(_password);
+                            Navigator.of(context).pushReplacementNamed('/');
+                            dynamic result = await Provider.of<AuthService>(
+                                    context,
+                                    listen: false)
+                                .signInWithEmailAndPassword(_email, _password);
+                            if (result == null) {
+                              setState(() => _showDialog('ERROR',
+                                  'No se ha podido iniciar sesión con esos credenciales'));
+                            }
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(15),
+                            child: Text(
+                              'Inicia Sesión',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).canvasColor,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 10),
-                    child: TextFormField(
-                      decoration:
-                          const InputDecoration(labelText: 'Contraseña'),
-                      onChanged: (val) => {setState(() => _password = val)},
-                      validator: (value) {
-                        if (value.isEmpty) {
-                          return 'Introduce una contraseña';
-                        }
-                        if (value.length < 6) {
-                          return 'La contraseña debe tener 6 caracteres mínimo';
-                        }
-                        return null;
-                      },
-                      obscureText: true,
-                    ),
-                  ),
-                  Container(
-                    child: FlatButton(
-                      onPressed: () async {
-                        if (!_formKey.currentState.validate()) {
-                          return;
-                        }
-
-                        _formKey.currentState.save();
-
-                        print(_email);
-                        print(_password);
-                        dynamic result =
-                            await Provider.of<AuthService>(context, listen:false).signInWithEmailAndPassword(_email, _password);
-                        if (result == null) {
-                          setState(() => _showDialog('ERROR',
-                              'No se ha podido iniciar sesión con esos credenciales'));
-                        }
-                      },
-                      child: Text('Inicia Sesión'),
-                    ),
-                  )
-                ],
+                ),
               ),
             ),
           ),
@@ -127,7 +159,7 @@ class _LoginScreen extends State<LoginScreen> {
             color: Theme.of(context).accentColor,
             child: InkWell(
               onTap: () => {
-                Navigator.of(context).push(MaterialPageRoute(
+                Navigator.of(context).pushReplacement(MaterialPageRoute(
                     builder: (BuildContext context) => RegisterScreen()))
               },
               child: Row(

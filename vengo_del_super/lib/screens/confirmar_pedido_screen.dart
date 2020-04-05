@@ -17,6 +17,7 @@ class ConfirmarPedidoScreen extends StatefulWidget {
 
 class _ConfirmarPedidoScreenState extends State<ConfirmarPedidoScreen> {
   bool aceptado = false;
+  bool terminado = false;
   Stream<DocumentSnapshot> pedidoStream;
   Future<DocumentSnapshot> userFuture;
   Firestore _firestore = Firestore.instance;
@@ -37,9 +38,14 @@ class _ConfirmarPedidoScreenState extends State<ConfirmarPedidoScreen> {
 
   _initAceptado() async {
     DocumentSnapshot doc = await pedidoStream.first;
-    if (doc['repartidor'] != null) {
+    if (doc['repartidor'] != null && !doc['terminado']) {
       setState(() {
         aceptado = true;
+      });
+    } else if(doc['repartidor'] != null && doc['terminado']) {
+      setState(() {
+        aceptado = true;
+        terminado = true;
       });
     }
     destino = doc['localizacion'];
@@ -111,7 +117,7 @@ class _ConfirmarPedidoScreenState extends State<ConfirmarPedidoScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Confirmar pedido'),
+        title: Text('Detalles del pedido'),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -169,6 +175,23 @@ class _ConfirmarPedidoScreenState extends State<ConfirmarPedidoScreen> {
               child: RaisedButton(
                 child: Text(
                   'Aceptar pedido',
+                  style: TextStyle(color: Theme.of(context).canvasColor),
+                ),
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                color: Theme.of(context).accentColor,
+                onPressed: () {
+                  setState(() {
+                    _aceptarPedido();
+                  });
+                },
+              ),
+            ),
+          if(aceptado && !terminado)
+            ButtonTheme(
+              height: 50,
+              child: RaisedButton(
+                child: Text(
+                  'Terminar pedido',
                   style: TextStyle(color: Theme.of(context).canvasColor),
                 ),
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
