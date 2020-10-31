@@ -9,4 +9,4 @@ Es una aplicación que une personas que sean especialmente vulnerables en el per
 
 Autores:
  - Alexey Zhelezov (https://www.linkedin.com/in/exeltor/)
- - Ignacio Triguero Pedraza (https://www.linkedin.com/in/ignacio-triguero-pedraza-75b464131/) 
+ - Ignacio Triguero Pedraza (https://www.linkedin.com/in/ignaciotriguero/) 
